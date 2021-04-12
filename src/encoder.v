@@ -16,21 +16,12 @@ module encoder #(
 
 	always @ (posedge clk) begin
 		
-		if ({a, old_a, b, old_b} == 4'b1000) begin
-			value <= value + INC_STEP;
-		end
-		
-		if ({a, old_a, b, old_b} == 4'b0111) begin
-			value <= value + INC_STEP;
-		end
-
-		if ({a, old_a, b, old_b} == 4'b0010) begin
-			value <= value - INC_STEP;
-		end
-		
-		if ({a, old_a, b, old_b} == 4'b1101) begin
-			value <= value - INC_STEP;
-		end
+		case ({a, old_a, b, old_b})
+			4'b1000 : value <= value + INC_STEP;
+			4'b0111 : value <= value + INC_STEP;
+			4'b0010 : value <= value - INC_STEP;
+			4'b1101 : value <= value - INC_STEP;
+		endcase			
 
 		old_a <= a;
 		old_b <= b;
