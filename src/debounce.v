@@ -1,21 +1,24 @@
 `default_nettype none
 `timescale 1ns/1ns
-module debounce (
+module debounce #(
+	parameter HIST_LEN = 8
+)(
     input wire clk,
     input wire reset,
     input wire button,
     output reg debounced
 );
-	reg [7:0] b_history;
+	localparam on_value = 2 ** HIST_LEN - 1;
+	reg [HIST_LEN-1:0] b_history;
 	
 	always @(posedge clk) begin	
 	
-		b_history <= { b_history[6:0], button };
-		if ( b_history == 8'b1111_1111) begin
+		b_history <= { b_history[HIST_LEN-2:0], button };
+		if ( b_history == on_value ) begin
 			debounced <= 1;
 		end
 
-		if (b_history == 8'b0000_000) begin
+		if (b_history == {HIST_LEN{1'b0}} ) begin
 			debounced <= 0;
 		end
 
