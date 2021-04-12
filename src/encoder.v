@@ -8,4 +8,38 @@ module encoder (
     output reg [7:0] value
 );
 
+	reg old_a;
+	reg old_b;
+
+	always @ (posedge clk) begin
+		
+		if ({a, old_a, b, old_b} == 4'b1000) begin
+			value <= value + 1;
+		end
+		
+		if ({a, old_a, b, old_b} == 4'b0111) begin
+			value <= value + 1;
+		end
+
+		if ({a, old_a, b, old_b} == 4'b0010) begin
+			value <= value - 1;
+		end
+		
+		if ({a, old_a, b, old_b} == 4'b1101) begin
+			value <= value - 1;
+		end
+
+		old_a <= a;
+		old_b <= b;
+	
+
+		if (reset) begin
+			value <= 0;
+		end
+
+
+	end
+
+
+
 endmodule
