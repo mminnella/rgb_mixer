@@ -2,7 +2,7 @@
 `timescale 1ns/1ns
 module encoder #(
 	parameter DATA_LEN = 8,
-       	parameter INC_STEP = 1	
+       	parameter INC_STEP = 1'b1	
 )(
     input clk,
     input reset,
