@@ -1,14 +1,14 @@
 `default_nettype none
 `timescale 1ns/1ns
 module encoder #(
-	parameter DATA_LEN = 8,
+	parameter WIDTH = 8,
        	parameter INC_STEP = 1'b1	
 )(
     input clk,
     input reset,
     input a,
     input b,
-    output reg [DATA_LEN-1:0] value
+    output reg [WIDTH-1:0] value
 );
 
 	reg old_a;
