@@ -3,42 +3,35 @@
 module rgb_mixer (
     input clk12MHz,
     input reset,
-    input enc0_a,
-    input enc0_b,
-    input enc1_a,
-    input enc1_b,
-    input enc2_a,
-    input enc2_b,
-    output pwm0_out,
-    output pwm1_out,
-    output pwm2_out
+    input [2:0] enca, //enca_0, enca_1, enca_2
+    input [2:0] encb, //encb_0, encb_1. encb_2
+    output [2:0] pwm_out //pwm0_out, pwm1_out, pwm2_out
 );
-    wire enc0_a_db, enc0_b_db;
-    wire enc1_a_db, enc1_b_db;
-    wire enc2_a_db, enc2_b_db;
+    wire [2:0] enca_db; //enca_db0, enca_db1, enca_db2
+    wire [2:0] encb_db; //encb_db0, encb_db1, encb_db3
     wire [7:0] enc0, enc1, enc2;
     reg [7:0] clk_div;
     wire clk;
 
     // debouncers, 2 for each encoder
-    debounce #(.HIST_LEN(8)) debounce0_a(.clk(clk), .reset(reset), .button(enc0_a), .debounced(enc0_a_db));
-    debounce #(.HIST_LEN(8)) debounce0_b(.clk(clk), .reset(reset), .button(enc0_b), .debounced(enc0_b_db));
+    debounce #(.HIST_LEN(8)) debounce0_a(.clk(clk), .reset(reset), .button(enca[0]), .debounced(enca_db[0]));
+    debounce #(.HIST_LEN(8)) debounce0_b(.clk(clk), .reset(reset), .button(encb[0]), .debounced(encb_db[0]));
 
-    debounce #(.HIST_LEN(8)) debounce1_a(.clk(clk), .reset(reset), .button(enc1_a), .debounced(enc1_a_db));
-    debounce #(.HIST_LEN(8)) debounce1_b(.clk(clk), .reset(reset), .button(enc1_b), .debounced(enc1_b_db));
+    debounce #(.HIST_LEN(8)) debounce1_a(.clk(clk), .reset(reset), .button(enca[1]), .debounced(enca_db[1]));
+    debounce #(.HIST_LEN(8)) debounce1_b(.clk(clk), .reset(reset), .button(encb[1]), .debounced(encb_db[1]));
 
-    debounce #(.HIST_LEN(8)) debounce2_a(.clk(clk), .reset(reset), .button(enc2_a), .debounced(enc2_a_db));
-    debounce #(.HIST_LEN(8)) debounce2_b(.clk(clk), .reset(reset), .button(enc2_b), .debounced(enc2_b_db));
+    debounce #(.HIST_LEN(8)) debounce2_a(.clk(clk), .reset(reset), .button(enca[2]), .debounced(enca_db[2]));
+    debounce #(.HIST_LEN(8)) debounce2_b(.clk(clk), .reset(reset), .button(encb[2]), .debounced(encb_db[2]));
 
     // encoders
-    encoder #(.WIDTH(8)) encoder0(.clk(clk), .reset(reset), .a(enc0_a_db), .b(enc0_b_db), .value(enc0));
-    encoder #(.WIDTH(8)) encoder1(.clk(clk), .reset(reset), .a(enc1_a_db), .b(enc1_b_db), .value(enc1));
-    encoder #(.WIDTH(8)) encoder2(.clk(clk), .reset(reset), .a(enc2_a_db), .b(enc2_b_db), .value(enc2));
+    encoder #(.WIDTH(8)) encoder0(.clk(clk), .reset(reset), .a(enca_db[0]), .b(encb_db[0]), .value(enc0));
+    encoder #(.WIDTH(8)) encoder1(.clk(clk), .reset(reset), .a(enca_db[1]), .b(encb_db[1]), .value(enc1));
+    encoder #(.WIDTH(8)) encoder2(.clk(clk), .reset(reset), .a(enca_db[2]), .b(encb_db[2]), .value(enc2));
 
     // pwm modules
-    pwm #(.WIDTH(8)) pwm0(.clk(clk), .reset(reset), .out(pwm0_out), .level(enc0));
-    pwm #(.WIDTH(8)) pwm1(.clk(clk), .reset(reset), .out(pwm1_out), .level(enc1));
-    pwm #(.WIDTH(8)) pwm2(.clk(clk), .reset(reset), .out(pwm2_out), .level(enc2));
+    pwm #(.WIDTH(8)) pwm0(.clk(clk), .reset(reset), .out(pwm_out[0]), .level(enc0));
+    pwm #(.WIDTH(8)) pwm1(.clk(clk), .reset(reset), .out(pwm_out[1]), .level(enc1));
+    pwm #(.WIDTH(8)) pwm2(.clk(clk), .reset(reset), .out(pwm_out[2]), .level(enc2));
 
     always @ (posedge clk12MHz) begin
     	clk_div <= clk_div + 1'b1;
