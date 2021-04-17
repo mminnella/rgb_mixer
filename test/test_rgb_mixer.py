@@ -39,9 +39,9 @@ async def test_all(dut):
     cocotb.fork(clock.start())
 
     await reset(dut)
-    assert dut.enc == 0
-    #assert dut.enc1 == 0
-    #/assert dut.enc2 == 0
+    assert dut.enc2 == 0
+    assert dut.enc1 == 0
+    assert dut.enc0 == 0
 
     # pwm should all be low at start
     assert dut.pwm_out[0] == 0

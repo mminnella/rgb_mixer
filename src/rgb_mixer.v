@@ -13,25 +13,29 @@ module rgb_mixer (
     reg [7:0] clk_div;
     wire clk;
 
+
+    wire enc0 = enc[8*0 +: 8]; //temp reg for cocotb...yosys should optimize/removei f not needed
+  
+    wire enc1 = enc[8*1 +: 8]; //temp reg for cocotb...yosys should optimize/removei f not needed
+  
+    wire enc2 = enc[8*2 +: 8]; //temp reg for cocotb...yosys should optimize/removei f not needed
+  
+   
+    generate
+	    genvar i;
+	    for( i=0; i<2; i++) begin
+	    
     // debouncers, 2 for each encoder
-    debounce #(.HIST_LEN(8)) debounce0_a(.clk(clk), .reset(reset), .button(enca[0]), .debounced(enca_db[0]));
-    debounce #(.HIST_LEN(8)) debounce0_b(.clk(clk), .reset(reset), .button(encb[0]), .debounced(encb_db[0]));
-
-    debounce #(.HIST_LEN(8)) debounce1_a(.clk(clk), .reset(reset), .button(enca[1]), .debounced(enca_db[1]));
-    debounce #(.HIST_LEN(8)) debounce1_b(.clk(clk), .reset(reset), .button(encb[1]), .debounced(encb_db[1]));
-
-    debounce #(.HIST_LEN(8)) debounce2_a(.clk(clk), .reset(reset), .button(enca[2]), .debounced(enca_db[2]));
-    debounce #(.HIST_LEN(8)) debounce2_b(.clk(clk), .reset(reset), .button(encb[2]), .debounced(encb_db[2]));
+    debounce #(.HIST_LEN(8)) debounce0_a(.clk(clk), .reset(reset), .button(enca[i]), .debounced(enca_db[i]));
+    debounce #(.HIST_LEN(8)) debounce0_b(.clk(clk), .reset(reset), .button(encb[i]), .debounced(encb_db[i]));
 
     // encoders
-    encoder #(.WIDTH(8)) encoder0(.clk(clk), .reset(reset), .a(enca_db[0]), .b(encb_db[0]), .value(enc[8*0 +: 8]));
-    encoder #(.WIDTH(8)) encoder1(.clk(clk), .reset(reset), .a(enca_db[1]), .b(encb_db[1]), .value(enc[8*1 +: 8]));
-    encoder #(.WIDTH(8)) encoder2(.clk(clk), .reset(reset), .a(enca_db[2]), .b(encb_db[2]), .value(enc[8*2 +: 8]));
+    encoder #(.WIDTH(8)) encoder0(.clk(clk), .reset(reset), .a(enca_db[i]), .b(encb_db[i]), .value(enc[8*i +: 8]));
 
     // pwm modules
-    pwm #(.WIDTH(8)) pwm0(.clk(clk), .reset(reset), .out(pwm_out[0]), .level(enc[8*0 +: 8]));
-    pwm #(.WIDTH(8)) pwm1(.clk(clk), .reset(reset), .out(pwm_out[1]), .level(enc[8*1 +: 8]));
-    pwm #(.WIDTH(8)) pwm2(.clk(clk), .reset(reset), .out(pwm_out[2]), .level(enc[8*2 +: 8]));
+    pwm #(.WIDTH(8)) pwm0(.clk(clk), .reset(reset), .out(pwm_out[i]), .level(enc[8*i +: 8]));
+       	     end
+    endgenerate
 
     always @ (posedge clk12MHz) begin
     	clk_div <= clk_div + 1'b1;
