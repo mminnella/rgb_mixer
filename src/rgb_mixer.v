@@ -14,16 +14,16 @@ module rgb_mixer (
     wire clk;
 
 
-    wire enc0 = enc[8*0 +: 8]; //temp reg for cocotb...yosys should optimize/removei f not needed
+    wire [7:0] enc0 = enc[8*0 +: 8]; //temp reg for cocotb...yosys should optimize/removei f not needed
   
-    wire enc1 = enc[8*1 +: 8]; //temp reg for cocotb...yosys should optimize/removei f not needed
+    wire [7:0] enc1 = enc[8*1 +: 8]; //temp reg for cocotb...yosys should optimize/removei f not needed
   
-    wire enc2 = enc[8*2 +: 8]; //temp reg for cocotb...yosys should optimize/removei f not needed
+    wire [7:0] enc2 = enc[8*2 +: 8]; //temp reg for cocotb...yosys should optimize/removei f not needed
   
    
     generate
 	    genvar i;
-	    for( i=0; i<2; i++) begin
+	    for( i=0; i<3; i++) begin
 	    
     // debouncers, 2 for each encoder
     debounce #(.HIST_LEN(8)) debounce0_a(.clk(clk), .reset(reset), .button(enca[i]), .debounced(enca_db[i]));
