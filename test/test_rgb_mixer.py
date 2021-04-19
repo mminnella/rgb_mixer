@@ -6,6 +6,21 @@ from test.test_encoder import Encoder
 
 clocks_per_phase = 10
 
+#General Purpose helper func
+#seems that cocotb don't deal with 
+#RisingEdge(example_bus[0]
+#calling await until_posedge_signal(clk,example[0]) 
+#fix this issue
+async def until_posedge_signal(clk, sig):
+    while True:
+        await RisingEdge(clk)
+        if (sig.value == 0):
+            break
+    while True:
+        await RisingEdge(clk)
+        if (sig.value == 1):
+            return
+
 async def reset(dut):
     dut.enca[0] <= 0
     dut.encb[0] <= 0
@@ -55,7 +70,9 @@ async def test_all(dut):
     await run_encoder_test(encoder2, dut.enc2, max_count)
 
     # sync to pwm
-    await RisingEdge(dut.pwm_out[0])
+    #await RisingEdge(dut.pwm_out[0]) #not actually supported in cocotb
+    await until_posedge_signal(dut.clk, dut.pwm_out[0])
+    #await RisingEdge(dut.pwm_out0) #use the helper wire defined in the verilog module
     # pwm should all be on for max_count 
     for i in range(max_count): 
         assert dut.pwm_out[0] == 1

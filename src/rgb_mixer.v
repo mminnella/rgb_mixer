@@ -19,7 +19,13 @@ module rgb_mixer (
     wire [7:0] enc1 = enc[8*1 +: 8]; //temp reg for cocotb...yosys should optimize/removei f not needed
   
     wire [7:0] enc2 = enc[8*2 +: 8]; //temp reg for cocotb...yosys should optimize/removei f not needed
-  
+
+//    wire pwm_out0 = pwm_out[0]; //todo remove
+
+//    wire pwm_out1 = pwm_out[1]; //todo remove
+
+//    wire pwm_out2 = pwm_out[2]; //todo remove
+
    
     generate
 	    genvar i;
